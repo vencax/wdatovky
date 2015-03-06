@@ -14,6 +14,7 @@ app = Flask(__name__)
 def hello():
     return render_template('index.html')
 
+
 @app.route('/send', methods=['POST'])
 def send():    
     recpt = request.form.get('recpt')
