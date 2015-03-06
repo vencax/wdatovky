@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="cz">
+<head>
+  <meta charset='UTF-8'/>
+  <title>Posilac datovych zprav</title>  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+  
+  <link rel="stylesheet" href="http://cdn.foundation5.zurb.com/foundation.css">  
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+<body>
+
+  <div class="row">
+    <section role="main">
+      <div class="small-12 columns ">
+
+		<h1>Posilac datovych zprav</h1>
+		
+		{% if message %}
+		<div data-alert class="alert-box {{ class }} round">
+		  {{ message }}
+		  <a href="#" class="close">&times;</a>
+		</div>
+		{% endif %}
+
+		<form action="/send" method="POST">
+
+	      <label>Adresat
+	        <input name="recpt" type="text" placeholder="datova schranka prijemce" />
+	      </label>
+   
+	      <label>Predmet
+	        <input name="subj" type="text" placeholder="predmet" />
+	      </label>
+	      
+	      <label>Zprava
+	        <textarea name="content" placeholder="text zpravy" style="height: 8em;"></textarea>
+	      </label>
+	      
+	      <hr/>
+   
+   		  <label>Username
+	        <input name="uname" type="text" placeholder="Tvoje prihlasovaci jmeno do DS" />
+	      </label>
+	      
+	      <label>Heslo
+	        <input name="pwd" type="text" placeholder="Tvoje heslo do DS" />
+	      </label>
+	      
+	      <hr/>
+	      
+	      <input type="submit" class="button" value="Posli">
+  
+		</form>
+
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // $(document).foundation();
+  </script>
+  
+</body>
