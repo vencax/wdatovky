@@ -10,27 +10,38 @@ from flask import render_template
 
 app = Flask(__name__)
 
+def _do_send(req):
+    recpt = req.form.get('recpt')
+    uname = req.form.get('uname')
+    pwd = req.form.get('content')
+    subj = req.form.get('content')
+    attachements = [
+        ('text/plain', 'obsah zpravy', request.req.get('content'))
+    ]
+    return sendmessage.send(recpt, uname, pwd, subj, attachements)
+
+
 @app.route('/', methods=['GET'])
 def hello():
     return render_template('index.html')
 
-
 @app.route('/send', methods=['POST'])
 def send():    
-    recpt = request.form.get('recpt')
-    uname = request.form.get('uname')
-    pwd = request.form.get('content')
-    subj = request.form.get('content')
-    attachements = [
-        ('text/plain', 'obsah zpravy', request.form.get('content'))
-    ]
     try:
-        res = sendmessage.send(recpt, uname, pwd, subj, attachements)
+        res = _do_send(request)
         ctx = {'message': res, 'class': 'success'}
     except Exception, e:
         ctx = {'message': e, 'class': 'alert'}
     
     return render_template('index.html', **ctx)
+
+@app.route('/send', methods=['POST'])
+def send_ajax():
+    try:
+        return _do_send(request)
+    except Exception, e:
+        return e
+
     
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0')
