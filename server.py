@@ -13,10 +13,10 @@ app = Flask(__name__)
 def _do_send(req):
     recpt = req.form.get('recpt')
     uname = req.form.get('uname')
-    pwd = req.form.get('content')
-    subj = req.form.get('content')
+    pwd = req.form.get('pwd')
+    subj = req.form.get('subj')
     attachements = [
-        ('text/plain', 'obsah zpravy', request.req.get('content'))
+        ('text/plain', 'obsah zpravy', req.form.get('content'))
     ]
     return sendmessage.send(recpt, uname, pwd, subj, attachements)
 
@@ -32,6 +32,8 @@ def send():
         ctx = {'message': res, 'class': 'success'}
     except Exception, e:
         ctx = {'message': e, 'class': 'alert'}
+        import traceback
+        traceback.print_exc()
     
     return render_template('index.html', **ctx)
 
