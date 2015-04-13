@@ -7,18 +7,22 @@ from flask import Flask
 from datoveschranky import sendmessage
 from flask.globals import request
 from flask import render_template
+import base64
 
 app = Flask(__name__)
+
 
 def _do_send(req):
     recpt = req.form.get('recpt')
     uname = req.form.get('uname')
     pwd = req.form.get('pwd')
-    subj = req.form.get('subj')
+    subj = req.form.get('subj').encode('utf-8')
+    cont = base64.standard_b64encode(req.form.get('content').encode('utf-8'))
     attachements = [
-        ('text/plain', 'obsah zpravy', req.form.get('content'))
+        ('text/plain', 'zprava.txt', cont)
     ]
-    return sendmessage.send(recpt, uname, pwd, subj, attachements)
+    res = sendmessage.send(recpt, uname, pwd, subj, attachements)
+    return (res.status.dmStatusMessage, res.data) 
 
 
 @app.route('/', methods=['GET'])
@@ -29,7 +33,8 @@ def hello():
 def send():    
     try:
         res = _do_send(request)
-        ctx = {'message': res, 'class': 'success'}
+        m = "%s, ID zpravy: %i" % res
+        ctx = {'message': m, 'class': 'success'}
     except Exception, e:
         ctx = {'message': e, 'class': 'alert'}
         import traceback
