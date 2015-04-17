@@ -25,7 +25,7 @@
 		</div>
 		{% endif %}
 
-		<form action="/send" method="POST">
+		<form action="/send" method="POST" enctype="multipart/form-data">
 
 	      <label>Adresat
 	        <input name="recpt" type="text" placeholder="datova schranka prijemce" />
@@ -37,6 +37,10 @@
 	      
 	      <label>Zprava
 	        <textarea name="content" placeholder="text zpravy" style="height: 8em;"></textarea>
+	      </label>
+	      
+	      <label>Priloha (nepovinne)
+	        <input type="file" name="attach">
 	      </label>
 	      
 	      <hr/>

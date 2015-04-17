@@ -21,8 +21,15 @@ def _do_send(req):
     attachements = [
         ('text/plain', 'zprava.txt', cont)
     ]
+    if 'attach' in req.files:
+        attach = req.files['attach']
+        attachements.append((
+            attach.content_type,
+            attach.filename,
+            base64.standard_b64encode(attach.read())
+        ))
     res = sendmessage.send(recpt, uname, pwd, subj, attachements)
-    return (res.status.dmStatusMessage, res.data) 
+    return (res.status.dmStatusMessage, res.data)
 
 
 @app.route('/', methods=['GET'])
@@ -30,7 +37,7 @@ def hello():
     return render_template('index.html')
 
 @app.route('/send', methods=['POST'])
-def send():    
+def send():
     try:
         res = _do_send(request)
         m = "%s, ID zpravy: %i" % res
