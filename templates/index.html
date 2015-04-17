@@ -6,6 +6,7 @@
   <title>Posilac datovych zprav</title>  
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+  <script src="http://zeptojs.com/zepto.min.js"></script>  
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.1/css/foundation.min.css">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
@@ -25,14 +26,14 @@
 		</div>
 		{% endif %}
 
-		<form action="/send" method="POST" enctype="multipart/form-data">
+		<form id="frm" action="/send" method="POST" enctype="multipart/form-data">
 
 	      <label>Adresat
-	        <input name="recpt" type="text" placeholder="datova schranka prijemce" />
+	        <input id="lr" name="recpt" type="text" placeholder="datova schranka prijemce" />
 	      </label>
    
 	      <label>Predmet
-	        <input name="subj" type="text" placeholder="predmet" />
+	        <input id="ls" name="subj" type="text" placeholder="predmet" />
 	      </label>
 	      
 	      <label>Zprava
@@ -46,16 +47,16 @@
 	      <hr/>
    
    		  <label>Username
-	        <input name="uname" type="text" placeholder="Tvoje prihlasovaci jmeno do DS" />
+	        <input id="un" name="uname" type="text" placeholder="Tvoje prihlasovaci jmeno do DS" />
 	      </label>
 	      
 	      <label>Heslo
-	        <input name="pwd" type="text" placeholder="Tvoje heslo do DS" />
+	        <input id="pw" name="pwd" type="text" placeholder="Tvoje heslo do DS" />
 	      </label>
 	      
 	      <hr/>
 	      
-	      <input type="submit" class="button" value="Posli">
+	      <input type="submit" class="button" onClick="onFormSubmit();" value="Posli">
   
 		</form>
 		
@@ -71,6 +72,29 @@
 
   <script>
     // $(document).foundation();
+    if (Modernizr.localstorage) {
+      if("posilacDatZpravU" in localStorage) {
+	  	$("#un")[0].value = localStorage.getItem("posilacDatZpravU");
+	  }
+	  if("posilacDatZpravP" in localStorage) {
+	    $("#pw")[0].value = localStorage.getItem("posilacDatZpravP");
+	  }
+	  if("posilacDatZpravLS" in localStorage) {
+	    $("#ls")[0].value = localStorage.getItem("posilacDatZpravLS");
+	  }
+	  if("posilacDatZpravLR" in localStorage) {
+	    $("#lr")[0].value = localStorage.getItem("posilacDatZpravLR");
+	  }
+	} else {
+	  // no native support for HTML5 storage :(
+	  // maybe try dojox.storage or a third-party solution
+	}
+	function onFormSubmit() {
+		localStorage.setItem("posilacDatZpravU", $("#un")[0].value);
+		localStorage.setItem("posilacDatZpravP", $("#pw")[0].value);
+		localStorage.setItem("posilacDatZpravLS", $("#ls")[0].value);
+		localStorage.setItem("posilacDatZpravLR", $("#lr")[0].value);
+	}
   </script>
   
 </body>
