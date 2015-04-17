@@ -37,7 +37,7 @@
 	      </label>
 
 	      <label>Zprava
-	        <textarea name="content" placeholder="text zpravy" style="height: 8em;"></textarea>
+	        <textarea id="mess" name="content" placeholder="text zpravy" style="height: 8em;"></textarea>
 	      </label>
 
         <div class="row">
@@ -48,7 +48,7 @@
             </label>
 
             <hr/>
-            
+
             <label>Username
     	        <input id="un" name="uname" type="text" placeholder="Tvoje prihlasovaci jmeno do DS" />
     	      </label>
@@ -83,27 +83,31 @@
     // $(document).foundation();
     if (Modernizr.localstorage) {
       if("posilacDatZpravU" in localStorage) {
-	  	$("#un")[0].value = localStorage.getItem("posilacDatZpravU");
-	  }
-	  if("posilacDatZpravP" in localStorage) {
-	    $("#pw")[0].value = localStorage.getItem("posilacDatZpravP");
-	  }
-	  if("posilacDatZpravLS" in localStorage) {
-	    $("#ls")[0].value = localStorage.getItem("posilacDatZpravLS");
-	  }
-	  if("posilacDatZpravLR" in localStorage) {
-	    $("#lr")[0].value = localStorage.getItem("posilacDatZpravLR");
-	  }
-	} else {
-	  // no native support for HTML5 storage :(
-	  // maybe try dojox.storage or a third-party solution
-	}
-	function onFormSubmit() {
-		localStorage.setItem("posilacDatZpravU", $("#un")[0].value);
-		localStorage.setItem("posilacDatZpravP", $("#pw")[0].value);
-		localStorage.setItem("posilacDatZpravLS", $("#ls")[0].value);
-		localStorage.setItem("posilacDatZpravLR", $("#lr")[0].value);
-	}
+  	  	$("#un")[0].value = localStorage.getItem("posilacDatZpravU");
+  	  }
+  	  if("posilacDatZpravP" in localStorage) {
+  	    $("#pw")[0].value = localStorage.getItem("posilacDatZpravP");
+  	  }
+  	  if("posilacDatZpravLS" in localStorage) {
+  	    $("#ls")[0].value = localStorage.getItem("posilacDatZpravLS");
+  	  }
+  	  if("posilacDatZpravLR" in localStorage) {
+  	    $("#lr")[0].value = localStorage.getItem("posilacDatZpravLR");
+  	  }
+      if("posilacDatZpravMESS" in localStorage) {
+        $("#mess")[0].value = localStorage.getItem("posilacDatZpravMESS");
+      }
+  	} else {
+  	  // no native support for HTML5 storage :(
+  	  // maybe try dojox.storage or a third-party solution
+  	}
+  	function onFormSubmit() {
+  		localStorage.setItem("posilacDatZpravU", $("#un")[0].value);
+  		localStorage.setItem("posilacDatZpravP", $("#pw")[0].value);
+  		localStorage.setItem("posilacDatZpravLS", $("#ls")[0].value);
+  		localStorage.setItem("posilacDatZpravLR", $("#lr")[0].value);
+      localStorage.setItem("posilacDatZpravMESS", $("#mess")[0].value);
+  	}
   </script>
 
 </body>
