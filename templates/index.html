@@ -6,7 +6,7 @@
   <title>Posilac datovych zprav</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.4/zepto.min.js"></script>  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.4/zepto.min.js"></script>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.1/css/foundation.min.css">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
@@ -40,23 +40,32 @@
 	        <textarea name="content" placeholder="text zpravy" style="height: 8em;"></textarea>
 	      </label>
 
-	      <label>Priloha (nepovinne)
-	        <input type="file" name="attach">
-	      </label>
+        <div class="row">
+          <div class="small-6 columns">
 
-	      <hr/>
+            <label>Priloha (nepovinne)
+              <input type="file" name="attach">
+            </label>
 
-   		  <label>Username
-	        <input id="un" name="uname" type="text" placeholder="Tvoje prihlasovaci jmeno do DS" />
-	      </label>
+            <hr/>
+            
+            <label>Username
+    	        <input id="un" name="uname" type="text" placeholder="Tvoje prihlasovaci jmeno do DS" />
+    	      </label>
 
-	      <label>Heslo
-	        <input id="pw" name="pwd" type="text" placeholder="Tvoje heslo do DS" />
-	      </label>
+    	      <label>Heslo
+    	        <input id="pw" name="pwd" type="text" placeholder="Tvoje heslo do DS" />
+    	      </label>
 
-	      <hr/>
+    	      <hr/>
 
-	      <input type="submit" class="button" onClick="onFormSubmit();" value="Posli">
+    	      <input type="submit" class="button" onClick="onFormSubmit();" value="Posli">
+          </div>
+
+          <div>
+            <img src="http://factspy.net/wp-content/uploads/2011/11/IE-trollface.png" alt="troll" />
+          </div>
+        </div>
 
 		</form>
 
