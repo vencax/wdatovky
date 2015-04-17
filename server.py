@@ -40,7 +40,7 @@ def hello():
 def send():
     try:
         res = _do_send(request)
-        m = "%s, ID zpravy: %i" % res
+        m = "%s, ID zpravy: %s" % str(res[1])
         ctx = {'message': m, 'class': 'success'}
     except Exception, e:
         ctx = {'message': e, 'class': 'alert'}
