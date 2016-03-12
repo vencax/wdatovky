@@ -23,11 +23,12 @@ def _do_send(req):
     ]
     if 'attach' in req.files:
         attach = req.files['attach']
-        attachements.append((
-            attach.content_type,
-            attach.filename,
-            base64.standard_b64encode(attach.read())
-        ))
+        if attach.content_length > 0:
+            attachements.append((
+                attach.content_type,
+                attach.filename,
+                base64.standard_b64encode(attach.read())
+            ))
     res = sendmessage.send(recpt, uname, pwd, subj, attachements)
     return (res.status.dmStatusMessage, res.data)
 
@@ -40,7 +41,7 @@ def hello():
 def send():
     try:
         res = _do_send(request)
-        m = "%s, ID zpravy: %s" % str(res[1])
+        m = "%s, ID zpravy: %s" % (res[0], str(res[1]))
         ctx = {'message': m, 'class': 'success'}
     except Exception, e:
         ctx = {'message': e, 'class': 'alert'}
