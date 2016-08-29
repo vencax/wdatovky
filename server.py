@@ -27,8 +27,8 @@ class InvalidUsage(Exception):
         rv = dict(self.payload or ())
         rv['message'] = self.message
         return rv
-    
-    
+
+
 @app.errorhandler(InvalidUsage)
 def handle_invalid_usage(error):
     response = jsonify(error.to_dict())
@@ -40,15 +40,21 @@ def handle_realy_bad_thing(error):
     return str(error)
 
 def _do_send(recpt, uname, pwd, subj, text, attach=[]):
-    
+
     attachements = []
     if text:
-        attachements.append(('text/plain', 'zprava.txt', base64.standard_b64encode(text)))
+        attachements.append(('text/plain', 'zprava.txt', base64.standard_b64encode(text.encode('utf-8'))))
     for a in attach:
         attachements.append(a)
-        
+
     res = sendmessage.send(recpt, uname, pwd, subj, attachements)
-    return (res.status.dmStatusMessage, res.data)
+    try:
+        if(int(res.status.dmStatusCode) == 0):
+            return (res.status.dmStatusMessage, res.data)
+        else:
+            raise InvalidUsage(str(res.status))
+    except:
+        raise InvalidUsage(str(res.status))
 
 
 @app.route('/', methods=['GET'])
@@ -57,8 +63,10 @@ def hello():
 
 def _checkAttachements(atts):
     for a in atts:
-        if(not a.content_type or not a.filename or not a.content):
-            raise Exception('wrong attachements!')
+        if(not a.get('content_type', None)
+           or not a.get('filename', None)
+           or not a.get('content', None)):
+            raise InvalidUsage('wrong attachements!')
 
 @app.route('/send', methods=['POST'])
 def send():
@@ -80,7 +88,7 @@ def send():
         ctx = {'message': e, 'class': 'alert'}
         import traceback
         traceback.print_exc()
-    
+
     return render_template('index.html', **ctx)
 
 @app.route('/api', methods=['POST'])
@@ -90,11 +98,10 @@ def send_ajax():
     if('attach' in request.json):
         _checkAttachements(request.json['attach'])
         request.json['attach'] = [(
-            a.content_type, a.filename, 
-            base64.standard_b64encode(a.content)
+            a['content_type'], a['filename'], a['content']
         ) for a in request.json['attach']]
     res = _do_send(**request.json)
     return res
-    
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
