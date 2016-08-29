@@ -74,8 +74,8 @@ def send():
         recpt = request.form.get('recpt')
         uname = request.form.get('uname')
         pwd = request.form.get('pwd')
-        subj = request.form.get('subj').encode('utf-8')
-        text = request.form.get('content').encode('utf-8')
+        subj = request.form.get('subj')
+        text = request.form.get('content')
         atts = [(
             attach.content_type,
             attach.filename,
