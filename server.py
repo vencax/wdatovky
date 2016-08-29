@@ -7,28 +7,46 @@ from flask import Flask
 from datoveschranky import sendmessage
 from flask.globals import request
 from flask import render_template
+from flask import jsonify
 import base64
 
 app = Flask(__name__)
 
 
-def _do_send(req):
-    recpt = req.form.get('recpt')
-    uname = req.form.get('uname')
-    pwd = req.form.get('pwd')
-    subj = req.form.get('subj').encode('utf-8')
-    cont = base64.standard_b64encode(req.form.get('content').encode('utf-8'))
-    attachements = [
-        ('text/plain', 'zprava.txt', cont)
-    ]
-    if 'attach' in req.files:
-        attach = req.files['attach']
-        if attach.content_length > 0:
-            attachements.append((
-                attach.content_type,
-                attach.filename,
-                base64.standard_b64encode(attach.read())
-            ))
+class InvalidUsage(Exception):
+    status_code = 400
+
+    def __init__(self, message, status_code=None, payload=None):
+        Exception.__init__(self)
+        self.message = message
+        if status_code is not None:
+            self.status_code = status_code
+        self.payload = payload
+
+    def to_dict(self):
+        rv = dict(self.payload or ())
+        rv['message'] = self.message
+        return rv
+    
+    
+@app.errorhandler(InvalidUsage)
+def handle_invalid_usage(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
+
+@app.errorhandler(Exception)
+def handle_realy_bad_thing(error):
+    return str(error)
+
+def _do_send(recpt, uname, pwd, subj, text, attach=[]):
+    
+    attachements = []
+    if text:
+        attachements.append(('text/plain', 'zprava.txt', base64.standard_b64encode(text)))
+    for a in attach:
+        attachements.append(a)
+        
     res = sendmessage.send(recpt, uname, pwd, subj, attachements)
     return (res.status.dmStatusMessage, res.data)
 
@@ -37,10 +55,25 @@ def _do_send(req):
 def hello():
     return render_template('index.html')
 
+def _checkAttachements(atts):
+    for a in atts:
+        if(not a.content_type or not a.filename or not a.content):
+            raise Exception('wrong attachements!')
+
 @app.route('/send', methods=['POST'])
 def send():
     try:
-        res = _do_send(request)
+        recpt = request.form.get('recpt')
+        uname = request.form.get('uname')
+        pwd = request.form.get('pwd')
+        subj = request.form.get('subj').encode('utf-8')
+        text = request.form.get('content').encode('utf-8')
+        atts = [(
+            attach.content_type,
+            attach.filename,
+            base64.standard_b64encode(attach.read())
+        ) for attach in [request.files['attach']]]
+        res = _do_send(recpt, uname, pwd, subj, text, atts)
         m = "%s, ID zpravy: %s" % (res[0], str(res[1]))
         ctx = {'message': m, 'class': 'success'}
     except Exception, e:
@@ -50,13 +83,18 @@ def send():
     
     return render_template('index.html', **ctx)
 
-@app.route('/send', methods=['POST'])
+@app.route('/api', methods=['POST'])
 def send_ajax():
-    try:
-        return _do_send(request)
-    except Exception, e:
-        return e
-
+    if(request.content_type != 'application/json'):
+        raise InvalidUsage('only json encoded data suported')
+    if('attach' in request.json):
+        _checkAttachements(request.json['attach'])
+        request.json['attach'] = [(
+            a.content_type, a.filename, 
+            base64.standard_b64encode(a.content)
+        ) for a in request.json['attach']]
+    res = _do_send(**request.json)
+    return res
     
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
