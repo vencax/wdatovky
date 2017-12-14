@@ -69,29 +69,6 @@ def _checkAttachements(atts):
            or not a.get('content', None)):
             raise InvalidUsage('wrong attachements!')
 
-@app.route('/send', methods=['POST'])
-def send():
-    try:
-        recpt = request.form.get('recpt')
-        uname = request.form.get('uname')
-        pwd = request.form.get('pwd')
-        subj = request.form.get('subj')
-        text = request.form.get('content')
-        atts = [(
-            attach.content_type,
-            attach.filename,
-            base64.standard_b64encode(attach.read())
-        ) for attach in [request.files['attach']]]
-        res = _do_send(recpt, uname, pwd, subj, text, atts)
-        m = "%s, ID zpravy: %s" % (res[0], str(res[1]))
-        ctx = {'message': m, 'class': 'success'}
-    except Exception, e:
-        ctx = {'message': e, 'class': 'alert'}
-        import traceback
-        traceback.print_exc()
-
-    return render_template('index.html', **ctx)
-
 @app.route('/api', methods=['POST'])
 def send_ajax():
     if(request.content_type != 'application/json'):

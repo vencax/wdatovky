@@ -19,14 +19,7 @@
 
 		<h1>Posilac datovych zprav</h1>
 
-		{% if message %}
-		<div data-alert class="alert-box {{ class }} round">
-		  {{ message }}
-		  <a href="#" class="close">&times;</a>
-		</div>
-		{% endif %}
-
-		<form id="frm" action="/send" method="POST" enctype="multipart/form-data">
+		<div id="frm">
 
 	      <label>Adresat
 	        <input id="lr" name="recpt" type="text" placeholder="datova schranka prijemce" />
@@ -44,7 +37,7 @@
           <div class="small-6 columns">
 
             <label>Priloha (nepovinne)
-              <input type="file" name="attach">
+              <input type="file" id="attach" multiple>
             </label>
 
             <hr/>
@@ -59,6 +52,10 @@
 
     	      <hr/>
 
+            <div id="messageDiv" data-alert class="alert-box round" style="visibility: hidden;">
+        		  <div id="messageContent"></div>
+        		  <a href="#" class="close">&times;</a>
+        		</div>
     	      <input type="submit" class="button" onClick="onFormSubmit();" value="Posli">
           </div>
 
@@ -67,7 +64,7 @@
           </div>
         </div>
 
-		</form>
+		</div>
 
 		<footer>
 		  	Made with hate to cz government by <a href="http://www.vxk.cz">vencax</a>.
@@ -102,11 +99,51 @@
   	  // maybe try dojox.storage or a third-party solution
   	}
   	function onFormSubmit() {
-  		localStorage.setItem("posilacDatZpravU", $("#un")[0].value);
-  		localStorage.setItem("posilacDatZpravP", $("#pw")[0].value);
-  		localStorage.setItem("posilacDatZpravLS", $("#ls")[0].value);
-  		localStorage.setItem("posilacDatZpravLR", $("#lr")[0].value);
-      localStorage.setItem("posilacDatZpravMESS", $("#mess")[0].value);
+      var usename = $("#un")[0].value
+      var passwd = $("#pw")[0].value
+      var subject = $("#ls")[0].value
+      var recipient = $("#lr")[0].value
+      var message = $("#mess")[0].value
+      var m = {
+        uname: usename,
+        pwd: passwd,
+        subj: subject,
+        recpt: recipient
+      }
+      if (message.length > 0) {
+        m.text = message
+      }
+      var f1 = $("#attach")[0].files
+      if (f1.length > 0) {
+        var rv = []
+        for(var i=0; i<f1.length; i++) {
+          rv.push({
+            'filename': f1[i].name,
+            'content': new FileReaderSync().readAsText(f1[i])
+          })
+        }
+        m.attach = f1.map(fun)
+      }
+      $('#messageDiv').hide()
+      $.ajax({
+        type: 'POST',
+        url: '/api',
+        data: JSON.stringify(m),
+        contentType: 'application/json',
+        success: function(data) {
+          $('#messageContent').innerHTML = data
+          $('#messageDiv').show()
+        },
+        error: function(xhr, type) {
+          $('#messageDiv').innerHTML = type
+        }
+      })
+
+  		localStorage.setItem("posilacDatZpravU", usename);
+  		localStorage.setItem("posilacDatZpravP", passwd);
+  		localStorage.setItem("posilacDatZpravLS", subject);
+  		localStorage.setItem("posilacDatZpravLR", recipient);
+      localStorage.setItem("posilacDatZpravMESS", message);
   	}
   </script>
 
