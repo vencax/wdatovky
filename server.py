@@ -45,7 +45,8 @@ def _do_send(recpt, uname, pwd, subj, text, attach=[]):
     if text:
         attachements.append(('text/plain', 'zprava.txt', base64.standard_b64encode(text.encode('utf-8'))))
     for a in attach:
-        attachements.append(a)
+        if len(a[1]) > 0:
+            attachements.append(a)
 
     res = sendmessage.send(recpt, uname, pwd, subj, attachements)
     try:
