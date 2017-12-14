@@ -40,13 +40,11 @@ def handle_realy_bad_thing(error):
     return str(error)
 
 def _do_send(recpt, uname, pwd, subj, text, attach=[]):
-
     attachements = []
     if text:
         attachements.append(('text/plain', 'zprava.txt', base64.standard_b64encode(text.encode('utf-8'))))
     for a in attach:
-        if len(a[1]) > 0:
-            attachements.append(a)
+        attachements.append(a)
 
     res = sendmessage.send(recpt, uname, pwd, subj, attachements)
     try:
@@ -77,11 +75,12 @@ def send():
         pwd = request.form.get('pwd')
         subj = request.form.get('subj')
         text = request.form.get('content')
+        attachment = request.files['attach']
         atts = [(
-            attach.content_type,
-            attach.filename,
-            base64.standard_b64encode(attach.read())
-        ) for attach in [request.files['attach']]]
+            attachment.content_type,
+            attachment.filename,
+            base64.standard_b64encode(attachment.read())
+        )] if len(attachment.filename) > 0 else []
         res = _do_send(recpt, uname, pwd, subj, text, atts)
         m = "%s, ID zpravy: %s" % (res[0], str(res[1]))
         ctx = {'message': m, 'class': 'success'}
