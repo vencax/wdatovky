@@ -12,7 +12,7 @@ Umi POUZE application/json content type s nasledujicim schematem:
 - uname: uzivatelske jmeno pro DS
 - pwd: heslo pro DS
 - attach: (optional) pole objektu s 3 povinnymi atributy:
-  - content_type: typ prilohy
+  - content_type: typ prilohy (nepovinne, server si to umi doplnit podle dat)
   - filename: nazev prilohy
   - content: base64 zakodovany obsah prilohy
 

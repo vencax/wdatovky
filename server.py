@@ -9,6 +9,8 @@ from flask.globals import request
 from flask import render_template
 from flask import jsonify
 import base64
+import datetime
+import os
 
 app = Flask(__name__)
 
@@ -60,10 +62,20 @@ def _do_send(recpt, uname, pwd, subj, text, attach=[]):
 def hello():
     return render_template('index.html')
 
+def _addMime(attach):
+    fname = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+    with open(fname, 'w') as f:
+        f.write(base64.standard_b64decode(attach['content']))
+        mime = sendmessage.get_mime(fname)
+        attach['content_type'] = mime
+        os.remove(fname)
+
 def _checkAttachements(atts):
     for a in atts:
-        if(not a.get('content_type', None)
-           or not a.get('filename', None)
+        if(not a.get('content_type', None)):
+            _addMime(a)
+    for a in atts:
+        if(not a.get('filename', None)
            or not a.get('content', None)):
             raise InvalidUsage('wrong attachements!')
 
